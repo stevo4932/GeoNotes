@@ -3,7 +3,6 @@ package us.ststephens.geonotes;
 import android.Manifest;
 import android.location.Location;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -20,7 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import us.ststephens.geonotes.core.BaseActivity;
 
-public class MapsActivity extends BaseActivity implements OnMapReadyCallback, OnSuccessListener<Location>, OnFailureListener{
+public class NotesActivity extends BaseActivity implements OnMapReadyCallback, OnSuccessListener<Location>, OnFailureListener{
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap mMap;
     private Location lastKnownLocation;
@@ -29,7 +28,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.notes_activity);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         getUserLocation();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -54,7 +53,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, On
 
     @Override
     public void onFailure(@NonNull Exception e) {
-        Toast.makeText(MapsActivity.this, "Unable to retrieve location", Toast.LENGTH_SHORT).show();
+        Toast.makeText(NotesActivity.this, "Unable to retrieve location", Toast.LENGTH_SHORT).show();
     }
 
     @Override
