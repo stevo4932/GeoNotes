@@ -4,24 +4,22 @@ import android.Manifest;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import us.ststephens.geonotes.core.BaseActivity;
 
-public class NotesActivity extends BaseActivity implements OnMapReadyCallback, OnSuccessListener<Location>, OnFailureListener{
+public class NotesActivity extends BaseActivity implements OnSuccessListener<Location>, OnFailureListener{
+    private static final String TAG_LIST = "tag:list";
+    private static final String KEY_LOCATION = "key:location";
     private FusedLocationProviderClient fusedLocationClient;
-    private GoogleMap mMap;
     private Location lastKnownLocation;
     private static final int REQ_LOCATION = 0x1;
 
@@ -31,10 +29,24 @@ public class NotesActivity extends BaseActivity implements OnMapReadyCallback, O
         setContentView(R.layout.notes_activity);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         getUserLocation();
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+
+        if (savedInstanceState == null) {
+            NoteListFragment fragment = NoteListFragment.newInstance(null);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.frame_layout, fragment, TAG_LIST)
+                    .commit();
+        } else {
+            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+        }
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setTitle("Notes Nearby");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_LOCATION, lastKnownLocation);
     }
 
     private void getUserLocation() {
@@ -59,30 +71,7 @@ public class NotesActivity extends BaseActivity implements OnMapReadyCallback, O
     @Override
     public void onSuccess(Location location) {
         lastKnownLocation = location;
-        updateMapLocation();
-    }
-
-    private void updateMapLocation() {
-        if (mMap != null && lastKnownLocation != null) {
-            LatLng myLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(myLocation).title("Your location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-        }
-    }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        updateMapLocation();
+        Log.d("Notes", "Location: " + location.toString());
+        //load some notes using this location.
     }
 }

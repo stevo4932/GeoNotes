@@ -63,6 +63,16 @@ public class Note implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return title;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Note && ((Note) obj).id == this.id;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
