@@ -31,7 +31,7 @@ public class NoteListFragment extends Fragment {
         } else {
             notes = (Note[]) getArguments().getParcelableArray(KEY_NOTES);
         }
-        adapter = new NotesListAdapter(createNotes(5));
+        adapter = new NotesListAdapter(createNotes(10));
     }
 
     @Nullable
