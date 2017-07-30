@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class NoteListFragment extends Fragment implements View.OnClickListener{
+public class NoteListFragment extends Fragment implements View.OnClickListener, NotesListAdapter.OnNoteSelectedListener{
     private static final String KEY_NOTES = "key:notes";
     private Note[] notes;
     private NotesListAdapter adapter;
@@ -33,6 +33,7 @@ public class NoteListFragment extends Fragment implements View.OnClickListener{
             notes = (Note[]) getArguments().getParcelableArray(KEY_NOTES);
         }
         adapter = new NotesListAdapter(createNotes(10));
+        adapter.setListener(this);
     }
 
     @Nullable
@@ -53,6 +54,11 @@ public class NoteListFragment extends Fragment implements View.OnClickListener{
         if (v.getId() == R.id.fab) {
             startActivity(NewNoteActivity.newInstance(getContext()));
         }
+    }
+
+    @Override
+    public void onNoteSelected(Note note) {
+        startActivity(NoteDetailsActivity.newIntent(getContext(), note));
     }
 
     private static Note[] createNotes(int num) {

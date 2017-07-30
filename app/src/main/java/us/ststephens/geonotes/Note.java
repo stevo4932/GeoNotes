@@ -1,9 +1,12 @@
 package us.ststephens.geonotes;
 
+import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Date;
 
 public class Note implements Parcelable {
     @SerializedName("id")
@@ -15,11 +18,20 @@ public class Note implements Parcelable {
     @SerializedName("description")
     private String description;
 
+    @SerializedName("timeStamp")
+    private Date timeStamp;
+
+    @SerializedName("Address")
+    private String address;
+
     @SerializedName("lat")
     private double latitude;
 
     @SerializedName("long")
     private double  longitude;
+
+    public Note() {
+    }
 
     public String getTitle() {
         return title;
@@ -62,6 +74,22 @@ public class Note implements Parcelable {
         this.id = id;
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return title;
@@ -82,22 +110,24 @@ public class Note implements Parcelable {
         dest.writeLong(this.id);
         dest.writeString(this.title);
         dest.writeString(this.description);
+        dest.writeLong(this.timeStamp != null ? this.timeStamp.getTime() : -1);
+        dest.writeString(this.address);
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
-    }
-
-    public Note() {
     }
 
     protected Note(Parcel in) {
         this.id = in.readLong();
         this.title = in.readString();
         this.description = in.readString();
+        long tmpTimeStamp = in.readLong();
+        this.timeStamp = tmpTimeStamp == -1 ? null : new Date(tmpTimeStamp);
+        this.address = in.readString();
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
     }
 
-    public static final Parcelable.Creator<Note> CREATOR = new Parcelable.Creator<Note>() {
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
         @Override
         public Note createFromParcel(Parcel source) {
             return new Note(source);

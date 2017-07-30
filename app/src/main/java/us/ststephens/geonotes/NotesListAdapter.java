@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.ViewHolder> {
     private Note[] notes;
+    private OnNoteSelectedListener listener;
 
     public NotesListAdapter(Note[] notes) {
         this.notes = notes;
@@ -18,11 +19,30 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
         notifyDataSetChanged();
     }
 
+    public void setListener(OnNoteSelectedListener listener) {
+        this.listener = listener;
+    }
+
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.note_list_item, parent, false);
-        return new ViewHolder(view);
+        final ViewHolder viewHolder = new ViewHolder(view);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onViewHolderClicked(viewHolder);
+            }
+        });
+        return viewHolder;
+    }
+
+    private void onViewHolderClicked(ViewHolder viewHolder) {
+        if (listener != null) {
+            int position = viewHolder.getAdapterPosition();
+            Note note = notes[position];
+            listener.onNoteSelected(note);
+        }
     }
 
     @Override
@@ -54,5 +74,9 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
         public void setDescription(CharSequence description) {
             this.description.setText(description);
         }
+    }
+
+    public interface OnNoteSelectedListener{
+        void onNoteSelected(Note note);
     }
 }
