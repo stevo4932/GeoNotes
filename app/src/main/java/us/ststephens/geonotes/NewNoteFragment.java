@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,7 +60,6 @@ public class NewNoteFragment extends Fragment {
         description.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -75,12 +76,14 @@ public class NewNoteFragment extends Fragment {
         title.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 note.setTitle(s.toString());
+                if (shouldUpdateSave(before, count)) {
+                    getActivity().invalidateOptionsMenu();
+                }
             }
 
             @Override
@@ -92,9 +95,25 @@ public class NewNoteFragment extends Fragment {
         return view;
     }
 
+    public boolean shouldUpdateSave(int before, int after) {
+        boolean beforeEmpty = before == 0;
+        boolean afterEmpty = after == 0;
+        return (afterEmpty && !beforeEmpty) || (!afterEmpty && beforeEmpty);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.new_note_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem menuItem = menu.findItem(R.id.save);
+        if (menuItem == null) return;
+        boolean isEnabled = !TextUtils.isEmpty(note.getTitle());
+        menuItem.setEnabled(isEnabled);
+        menuItem.getIcon().setAlpha(isEnabled ? 255 : 64);
     }
 
     @Override
