@@ -1,9 +1,11 @@
 package us.ststephens.geonotes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 
 import us.ststephens.geonotes.core.BaseActivity;
@@ -11,6 +13,10 @@ import us.ststephens.geonotes.core.BaseActivity;
 public class NewNoteActivity extends BaseActivity implements NewNoteFragment.OnNoteSavedListener{
     private static final String TAG_FRAG = "tag:fragment";
     public static final String KEY_NOTE = "key:note";
+
+    public static Intent newInstance(Context context) {
+        return new Intent(context, NewNoteActivity.class);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
