@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import us.ststephens.geonotes.models.Note;
+
 public class NoteDetailsFragment extends Fragment {
     public static final String KEY_NOTE = "key:note";
     private Note note;

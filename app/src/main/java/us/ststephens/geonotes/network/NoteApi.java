@@ -9,7 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import us.ststephens.geonotes.Note;
+import us.ststephens.geonotes.models.Note;
 
 public class NoteApi extends BaseApi{
     private RequestQueue requestQueue;

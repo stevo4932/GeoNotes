@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 
 import us.ststephens.geonotes.core.BaseActivity;
+import us.ststephens.geonotes.models.Note;
 
 public class NoteDetailsActivity extends BaseActivity {
     private static final String KEY_NOTE = "key:note";

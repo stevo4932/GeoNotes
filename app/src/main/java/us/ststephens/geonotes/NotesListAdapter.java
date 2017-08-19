@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import us.ststephens.geonotes.models.Note;
+
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.ViewHolder> {
     private Note[] notes;
     private OnNoteSelectedListener listener;

@@ -1,6 +1,5 @@
-package us.ststephens.geonotes;
+package us.ststephens.geonotes.models;
 
-import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
 
