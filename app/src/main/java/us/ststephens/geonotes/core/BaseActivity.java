@@ -22,6 +22,8 @@ public class BaseActivity extends AppCompatActivity {
     public void requestPermission(String permission, int reqCode) {
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{permission}, reqCode);
+        } else {
+            onPermissionGranted(reqCode);
         }
     }
 
