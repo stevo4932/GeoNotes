@@ -26,6 +26,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import us.ststephens.geonotes.Utils.LocationUtils;
+import us.ststephens.geonotes.Utils.ObservableObject;
 import us.ststephens.geonotes.core.BaseActivity;
 
 public class NotesActivity extends BaseActivity implements OnSuccessListener<LocationSettingsResponse>, OnFailureListener{
@@ -33,9 +38,11 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
     private static final String KEY_LOCATION = "key:location";
     private static final String KEY_LOCATION_REQUEST = "key:location_request";
     private static final int REQUEST_CHECK_SETTINGS = 432;
+    private static final int TIME_INTERVAL = 1000 * 15;
+    private static final int FAST_TIME_INTERVAL = 1000 * 5;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
-    private Location latestLocation;
+    private ObservableObject<Location> latestLocation;
     private boolean isRequestingLocation;
     private static final int REQ_LOCATION = 0x1;
 
@@ -46,19 +53,30 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
         }
     };
 
+    private final Observer locationChangedObserver = new Observer() {
+        @Override
+        public void update(Observable o, Object arg) {
+            if (arg != null) {
+                Log.d("Notes", "Location Changed: " + arg.toString());
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notes_activity);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        latestLocation = new ObservableObject<>();
+        latestLocation.addObserver(locationChangedObserver);
         if (savedInstanceState == null) {
             NoteListFragment fragment = NoteListFragment.newInstance(null);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.frame_layout, fragment, TAG_LIST)
                     .commit();
         } else {
-            latestLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+            Location location = savedInstanceState.getParcelable(KEY_LOCATION);
+            latestLocation.set(location);
             isRequestingLocation = savedInstanceState.getBoolean(KEY_LOCATION_REQUEST);
         }
 
@@ -83,7 +101,7 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_LOCATION, latestLocation);
+        outState.putParcelable(KEY_LOCATION, latestLocation.get());
         outState.putBoolean(KEY_LOCATION_REQUEST, isRequestingLocation);
     }
 
@@ -154,8 +172,8 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
     private LocationRequest getLocationRequest() {
         if (locationRequest == null) {
             locationRequest = new LocationRequest();
-            locationRequest.setInterval(15000);
-            locationRequest.setFastestInterval(5000);
+            locationRequest.setInterval(TIME_INTERVAL);
+            locationRequest.setFastestInterval(FAST_TIME_INTERVAL);
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         }
         return locationRequest;
@@ -163,11 +181,10 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
 
     private void onNewLocationReceived(LocationResult locationResult) {
         for (Location location : locationResult.getLocations()) {
-            if (latestLocation == null || latestLocation.getTime() < location.getTime()) {
-                latestLocation = location;
+            if (LocationUtils.isBetterLocation(location, latestLocation.get())) {
+                latestLocation.set(location);
             }
         }
-        Log.d("Note", "Location Updated: " + latestLocation.toString());
     }
 
     @Override
