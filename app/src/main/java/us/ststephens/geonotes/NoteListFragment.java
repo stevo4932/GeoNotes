@@ -21,9 +21,11 @@ import us.ststephens.geonotes.models.Note;
 
 public class NoteListFragment extends Fragment implements View.OnClickListener, NotesListAdapter.OnNoteSelectedListener, LocationUpdate{
     private static final String KEY_NOTES = "key:notes";
+    private static final String KEY_LOCATION = "key:location";
     private static final int REQ_CREATE_NOTE = 55;
     private Note[] notes;
     private NotesListAdapter adapter;
+    private Location location;
 
     public static NoteListFragment newInstance(Note[] notes) {
         Bundle args = new Bundle();
@@ -37,9 +39,12 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            notes = (Note[]) savedInstanceState.getParcelableArray(KEY_NOTES);
+            notes = (Note[]) savedInstanceState.getParcelableArray(KEY_NOTES); // TODO: 8/20/17 don't save the list of notes in saved state bundle
+            location = savedInstanceState.getParcelable(KEY_LOCATION);
         } else {
-            notes = (Note[]) getArguments().getParcelableArray(KEY_NOTES);
+            Bundle arguments = getArguments();
+            notes = (Note[]) arguments.getParcelableArray(KEY_NOTES);
+            location = arguments.getParcelable(KEY_LOCATION);
         }
         adapter = new NotesListAdapter();
         adapter.setNotes(createNotes(10));
@@ -62,7 +67,7 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
-            startActivityForResult(NewNoteActivity.newInstance(getContext()), REQ_CREATE_NOTE);
+            startActivityForResult(NewNoteActivity.newInstance(getContext(), location), REQ_CREATE_NOTE);
         }
     }
 
@@ -89,12 +94,14 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArray(KEY_NOTES, notes);
+        outState.putParcelable(KEY_LOCATION, location);
     }
 
     @Override
     public void onLocationUpdated(Location location) {
         // TODO: 8/19/17 update user's list
         Log.d("Notes", "Location Updated");
+        this.location = location;
     }
 
     @Override

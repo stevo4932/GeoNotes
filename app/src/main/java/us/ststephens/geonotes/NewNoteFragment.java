@@ -1,6 +1,7 @@
 package us.ststephens.geonotes;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,11 +21,14 @@ import us.ststephens.geonotes.models.Note;
 
 public class NewNoteFragment extends Fragment {
     private static final String KEY_NOTE = "key:note";
+    private static final String KEY_LOCATION = "key:location";
     private OnNoteSavedListener listener;
     private Note note;
+    private Location currentLocation;
 
-    public static NewNoteFragment newInstance() {
+    public static NewNoteFragment newInstance(Location location) {
         Bundle args = new Bundle();
+        args.putParcelable(KEY_LOCATION, location);
         NewNoteFragment fragment = new NewNoteFragment();
         fragment.setArguments(args);
         return fragment;
@@ -46,8 +50,10 @@ public class NewNoteFragment extends Fragment {
         setHasOptionsMenu(true);
         if (savedInstanceState != null) {
             note = savedInstanceState.getParcelable(KEY_NOTE);
+            currentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         } else {
             note = new Note();
+            currentLocation = getArguments().getParcelable(KEY_LOCATION);
         }
     }
 
@@ -131,11 +137,10 @@ public class NewNoteFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_NOTE, note);
+        outState.putParcelable(KEY_LOCATION, currentLocation);
     }
 
     public interface OnNoteSavedListener{
         void onNoteSaved(Note note);
     }
-
-
 }

@@ -2,6 +2,7 @@ package us.ststephens.geonotes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,10 +13,13 @@ import us.ststephens.geonotes.models.Note;
 
 public class NewNoteActivity extends BaseActivity implements NewNoteFragment.OnNoteSavedListener{
     private static final String TAG_FRAG = "tag:fragment";
+    private static final String KEY_LOCATION = "key:location";
     public static final String KEY_CREATED_NOTE = "key:note";
 
-    public static Intent newInstance(Context context) {
-        return new Intent(context, NewNoteActivity.class);
+    public static Intent newInstance(Context context, Location location) {
+        Intent intent = new Intent(context, NewNoteActivity.class);
+        intent.putExtra(KEY_LOCATION, location);
+        return intent;
     }
 
     @Override
@@ -23,7 +27,8 @@ public class NewNoteActivity extends BaseActivity implements NewNoteFragment.OnN
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notes_activity);
         if (savedInstanceState == null) {
-            Fragment fragment = NewNoteFragment.newInstance();
+            Location location = getIntent().getParcelableExtra(KEY_LOCATION);
+            Fragment fragment = NewNoteFragment.newInstance(location);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.frame_layout, fragment, TAG_FRAG)
                     .commit();
