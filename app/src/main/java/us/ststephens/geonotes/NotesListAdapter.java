@@ -1,24 +1,34 @@
 package us.ststephens.geonotes;
 
+import android.support.v4.util.CircularArray;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import us.ststephens.geonotes.models.Note;
 
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.ViewHolder> {
-    private Note[] notes;
+    private CircularArray<Note> notes;
     private OnNoteSelectedListener listener;
 
-    public NotesListAdapter(Note[] notes) {
-        this.notes = notes;
+    public NotesListAdapter() {
+        this.notes = new CircularArray<>();
     }
 
     public void setNotes(Note[] notes) {
-        this.notes = notes;
+        for (Note note : notes) {
+            this.notes.addLast(note);
+        }
         notifyDataSetChanged();
+    }
+
+    public void addNote(Note note) {
+        notes.addFirst(note);
+        notifyItemInserted(0);
     }
 
     public void setListener(OnNoteSelectedListener listener) {
@@ -42,21 +52,21 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
     private void onViewHolderClicked(ViewHolder viewHolder) {
         if (listener != null) {
             int position = viewHolder.getAdapterPosition();
-            Note note = notes[position];
+            Note note = notes.get(position);
             listener.onNoteSelected(viewHolder.itemView, note);
         }
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Note note = notes[position];
+        Note note = notes.get(position);
         holder.setTitle(note.getTitle());
         holder.setDescription(note.getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return notes != null ? notes.length : 0;
+        return notes != null ? notes.size() : 0;
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder{
