@@ -51,6 +51,5 @@ public class NoteDetailsFragment extends Fragment {
     public void setNoteInfo(Note note) {
         title.setText(note.getTitle());
         description.setText(note.getDescription());
-        location.setText(note.getAddress());
     }
 }
