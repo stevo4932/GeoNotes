@@ -16,13 +16,11 @@ public class LocationUtils {
 
         boolean hasUserMovedFar = compareMovement(newLocation, currentLocation);
         if (!hasUserMovedFar) {
-            Log.v("Notes", "User has moved much");
             return false;
         }
 
         int ageDifference = compareAge(newLocation, currentLocation);
         if (ageDifference < 0) {
-            Log.v("Notes", "Location is way older than what we have");
             return false;
         }
 

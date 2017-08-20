@@ -2,6 +2,7 @@ package us.ststephens.geonotes;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,13 +11,15 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import us.ststephens.geonotes.core.LocationUpdate;
 import us.ststephens.geonotes.models.Note;
 
-public class NoteListFragment extends Fragment implements View.OnClickListener, NotesListAdapter.OnNoteSelectedListener{
+public class NoteListFragment extends Fragment implements View.OnClickListener, NotesListAdapter.OnNoteSelectedListener, LocationUpdate{
     private static final String KEY_NOTES = "key:notes";
     private static final int REQ_CREATE_NOTE = 55;
     private Note[] notes;
@@ -88,9 +91,10 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
         outState.putParcelableArray(KEY_NOTES, notes);
     }
 
-    public void setNotes(Note[] notes) {
-        this.notes = notes;
-        adapter.setNotes(notes);
+    @Override
+    public void onLocationUpdated(Location location) {
+        // TODO: 8/19/17 update user's list
+        Log.d("Notes", "Location Updated");
     }
 
     @Override

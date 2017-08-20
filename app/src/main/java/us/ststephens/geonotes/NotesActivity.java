@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,12 +27,17 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import us.ststephens.geonotes.Utils.LocationUtils;
 import us.ststephens.geonotes.Utils.ObservableObject;
 import us.ststephens.geonotes.core.BaseActivity;
+import us.ststephens.geonotes.core.LocationUpdate;
 
 public class NotesActivity extends BaseActivity implements OnSuccessListener<LocationSettingsResponse>, OnFailureListener{
     private static final String TAG_LIST = "tag:list";
@@ -45,6 +51,7 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
     private ObservableObject<Location> latestLocation;
     private boolean isRequestingLocation;
     private static final int REQ_LOCATION = 0x1;
+    List<WeakReference<Fragment>> fragmentList = new ArrayList<>();
 
     private final LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -57,10 +64,22 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
         @Override
         public void update(Observable o, Object arg) {
             if (arg != null) {
-                Log.d("Notes", "Location Changed: " + arg.toString());
+                updateFragmentLocations((Location) arg);
             }
         }
     };
+
+    private void updateFragmentLocations(Location location) {
+        Iterator<WeakReference<Fragment>> itr = fragmentList.iterator();
+        while (itr.hasNext()) {
+            Fragment fragment = itr.next().get();
+            if (fragment == null) {
+                itr.remove();
+            } else if (fragment.isVisible() && fragment instanceof LocationUpdate){
+                ((LocationUpdate) fragment).onLocationUpdated(location);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +101,12 @@ public class NotesActivity extends BaseActivity implements OnSuccessListener<Loc
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setTitle("Notes Nearby");
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        fragmentList.add(new WeakReference<>(fragment));
     }
 
     @Override
