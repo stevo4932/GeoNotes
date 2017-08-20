@@ -1,8 +1,11 @@
 package us.ststephens.geonotes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -58,8 +61,11 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onNoteSelected(Note note) {
-        startActivity(NoteDetailsActivity.newIntent(getContext(), note));
+    public void onNoteSelected(View view, Note note) {
+        Intent intent = NoteDetailsActivity.newIntent(getContext(), note);
+        Bundle options = ActivityOptionsCompat.makeScaleUpAnimation(
+                view, 0, 0, view.getWidth(), view.getHeight()).toBundle();
+        ActivityCompat.startActivity(getActivity(), intent, options);
     }
 
     private static Note[] createNotes(int num) {

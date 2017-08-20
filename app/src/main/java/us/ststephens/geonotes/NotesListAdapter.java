@@ -43,7 +43,7 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
         if (listener != null) {
             int position = viewHolder.getAdapterPosition();
             Note note = notes[position];
-            listener.onNoteSelected(note);
+            listener.onNoteSelected(viewHolder.itemView, note);
         }
     }
 
@@ -79,6 +79,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
     }
 
     public interface OnNoteSelectedListener{
-        void onNoteSelected(Note note);
+        void onNoteSelected(View view, Note note);
     }
 }
