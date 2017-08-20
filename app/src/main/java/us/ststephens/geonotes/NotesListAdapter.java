@@ -14,9 +14,8 @@ import java.util.ArrayList;
 
 import us.ststephens.geonotes.models.Note;
 
-public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.ViewHolder> {
+public class NotesListAdapter extends RecyclerView.Adapter<NoteListViewHolder> implements NoteListViewHolder.OnNoteClickedListener{
     private CircularArray<Note> notes;
-    private OnNoteSelectedListener listener;
     private RecyclerView recyclerView;
 
     public NotesListAdapter() {
@@ -40,10 +39,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
         }
     }
 
-    public void setListener(OnNoteSelectedListener listener) {
-        this.listener = listener;
-    }
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -57,31 +52,18 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
+    public NoteListViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.note_list_item, parent, false);
-        final ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onViewHolderClicked(viewHolder);
-            }
-        });
-        return viewHolder;
-    }
-
-    private void onViewHolderClicked(ViewHolder viewHolder) {
-        int position = viewHolder.getAdapterPosition();
-        viewHolder.setExpanded(!viewHolder.isExpanded());
-        notifyItemChanged(position);
+        return new NoteListViewHolder(view, this);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(NoteListViewHolder holder, int position) {
         Note note = notes.get(position);
         holder.setTitle(note.getTitle());
         holder.setDescription(note.getDescription());
-        holder.toggleDescription();
+        holder.toggleDescription(note.isExpanded());
     }
 
     @Override
@@ -89,45 +71,10 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
         return notes != null ? notes.size() : 0;
     }
 
-    protected static class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView title;
-        private TextView description;
-        private boolean isExpanded;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            title = (TextView) itemView.findViewById(R.id.title);
-            description = (TextView) itemView.findViewById(R.id.description);
-        }
-
-        public void setTitle(CharSequence title) {
-            this.title.setText(title);
-        }
-
-        public void setDescription(CharSequence description) {
-            this.description.setText(description);
-        }
-
-        public boolean isExpanded() {
-            return isExpanded;
-        }
-
-        public void setExpanded(boolean expanded) {
-            isExpanded = expanded;
-        }
-
-        public void toggleDescription() {
-            if (isExpanded()) {
-                description.setMaxLines(Integer.MAX_VALUE);
-                description.setEllipsize(null);
-            } else {
-                description.setMaxLines(2);
-                description.setEllipsize(TextUtils.TruncateAt.END);
-            }
-        }
-    }
-
-    public interface OnNoteSelectedListener{
-        void onNoteSelected(View view, Note note);
+    @Override
+    public void onNoteClicked(int position) {
+        Note note = notes.get(position);
+        note.setExpanded(!note.isExpanded()); //toggle expanded flag
+        notifyItemChanged(position);
     }
 }

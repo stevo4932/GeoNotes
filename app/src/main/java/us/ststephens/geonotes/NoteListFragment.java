@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import us.ststephens.geonotes.core.LocationUpdate;
 import us.ststephens.geonotes.models.Note;
 
-public class NoteListFragment extends Fragment implements View.OnClickListener, NotesListAdapter.OnNoteSelectedListener, LocationUpdate{
+public class NoteListFragment extends Fragment implements View.OnClickListener, LocationUpdate{
     private static final String KEY_NOTES = "key:notes";
     private static final String KEY_LOCATION = "key:location";
     private static final int REQ_CREATE_NOTE = 55;
@@ -48,7 +48,6 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
         }
         adapter = new NotesListAdapter();
         adapter.setNotes(createNotes(10));
-        adapter.setListener(this);
     }
 
     @Nullable
@@ -71,20 +70,14 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    @Override
-    public void onNoteSelected(View view, Note note) {
-        Intent intent = NoteDetailsActivity.newIntent(getContext(), note);
-        Bundle options = ActivityOptionsCompat.makeScaleUpAnimation(
-                view, 0, 0, view.getWidth(), view.getHeight()).toBundle();
-        ActivityCompat.startActivity(getActivity(), intent, options);
-    }
-
     private static Note[] createNotes(int num) {
         Note[] notes = new Note[num];
         for (int i = 0; i < num; i++) {
             Note note = new Note();
             note.setTitle("Test " + i);
-            note.setDescription("Adipiscing blandit venenatis feugiat dignissim viverra nisl habitasse vestibulum a dis leo nec nec fringilla a suspendisse ullamcorper.");
+            note.setDescription("Adipiscing blandit venenatis feugiat dignissim viverra nisl habitasse vestibulum a dis leo nec nec fringilla a suspendisse ullamcorper." +
+                    "Adipiscing blandit venenatis feugiat dignissim viverra nisl habitasse vestibulum a dis leo nec nec fringilla a suspendisse ullamcorper." +
+                    "Adipiscing blandit venenatis feugiat dignissim viverra nisl habitasse vestibulum a dis leo nec nec fringilla a suspendisse ullamcorper.");
             notes[i] = note;
         }
         return notes;

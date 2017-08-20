@@ -3,31 +3,42 @@ package us.ststephens.geonotes.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
 public class Note implements Parcelable {
     @SerializedName("id")
+    @Expose
     long id;
 
     @SerializedName("title")
+    @Expose
     private String title;
 
     @SerializedName("description")
+    @Expose
     private String description;
 
     @SerializedName("timeStamp")
+    @Expose
     private Date timeStamp;
 
     @SerializedName("Address")
+    @Expose
     private String address;
 
     @SerializedName("lat")
+    @Expose
     private double latitude;
 
     @SerializedName("long")
+    @Expose
     private double  longitude;
+
+    //used to know if the full description should be shown.
+    private boolean isExpanded;
 
     public Note() {
     }
@@ -89,6 +100,14 @@ public class Note implements Parcelable {
         this.address = address;
     }
 
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
+    }
+
     @Override
     public String toString() {
         return title;
@@ -113,6 +132,7 @@ public class Note implements Parcelable {
         dest.writeString(this.address);
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
+        dest.writeByte(this.isExpanded ? (byte) 1 : (byte) 0);
     }
 
     protected Note(Parcel in) {
@@ -124,6 +144,7 @@ public class Note implements Parcelable {
         this.address = in.readString();
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
+        this.isExpanded = in.readByte() != 0;
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
