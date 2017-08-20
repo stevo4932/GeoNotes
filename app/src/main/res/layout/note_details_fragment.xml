@@ -10,43 +10,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="4 minutes"
-        android:textSize="10sp"
         android:gravity="center"
-        android:padding="16dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        android:textColor="@color/dark_grey"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:layout_alignBottom="@+id/title" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="This is a test."
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:padding="16dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_toStartOf="@id/time_stamp"
-        android:layout_toLeftOf="@id/time_stamp"/>
-
-    <View
-        android:id="@+id/underline"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey"
-        android:layout_below="@id/title"/>
+        style="@style/TitleTextView"/>
 
     <TextView
         android:id="@+id/location_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Location"
-        android:textSize="13sp"
-        android:textColor="@color/black"
-        android:layout_below="@id/underline"
-        android:padding="16dp"/>
+        android:layout_below="@id/title"
+        style="@style/HeaderTextView"/>
 
     <TextView
         android:id="@+id/location"
@@ -65,17 +53,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/description"
-        android:padding="16dp"
-        android:textColor="@color/black"
-        android:textSize="13sp"
-        android:layout_below="@id/location"/>
+        android:layout_below="@id/location"
+        style="@style/HeaderTextView"/>
 
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="This is some example description. I am just writing random stuff to fill up a line sone that it will word wrap."
-        android:textSize="12sp"
+        android:textSize="16sp"
         android:textColor="@color/dark_grey"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
