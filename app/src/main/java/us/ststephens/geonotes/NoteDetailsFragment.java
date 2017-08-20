@@ -43,7 +43,7 @@ public class NoteDetailsFragment extends Fragment {
         title = (TextView) view.findViewById(R.id.title);
         location = (TextView) view.findViewById(R.id.location);
         description = (TextView) view.findViewById(R.id.description);
-        title = (TextView) view.findViewById(R.id.time_stamp);
+        time = (TextView) view.findViewById(R.id.time_stamp);
         setNoteInfo(note);
         return view;
     }
