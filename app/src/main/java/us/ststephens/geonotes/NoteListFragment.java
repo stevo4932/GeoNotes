@@ -1,5 +1,6 @@
 package us.ststephens.geonotes;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import us.ststephens.geonotes.models.Note;
 
 public class NoteListFragment extends Fragment implements View.OnClickListener, NotesListAdapter.OnNoteSelectedListener{
     private static final String KEY_NOTES = "key:notes";
+    private static final int REQ_CREATE_NOTE = 55;
     private Note[] notes;
     private NotesListAdapter adapter;
 
@@ -36,7 +38,8 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
         } else {
             notes = (Note[]) getArguments().getParcelableArray(KEY_NOTES);
         }
-        adapter = new NotesListAdapter(createNotes(10));
+        adapter = new NotesListAdapter();
+        adapter.setNotes(createNotes(10));
         adapter.setListener(this);
     }
 
@@ -56,7 +59,7 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
-            startActivity(NewNoteActivity.newInstance(getContext()));
+            startActivityForResult(NewNoteActivity.newInstance(getContext()), REQ_CREATE_NOTE);
         }
     }
 
@@ -88,5 +91,20 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
     public void setNotes(Note[] notes) {
         this.notes = notes;
         adapter.setNotes(notes);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_CREATE_NOTE) {
+            if (resultCode == Activity.RESULT_OK && adapter != null) {
+                Note createdNote = data.getParcelableExtra(NewNoteActivity.KEY_CREATED_NOTE);
+                if (createdNote != null) {
+                    adapter.addNote(createdNote);
+                }
+            } else {
+                //you might want to reload the list.
+            }
+        }
     }
 }

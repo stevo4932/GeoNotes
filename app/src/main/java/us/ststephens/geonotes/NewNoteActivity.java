@@ -12,7 +12,7 @@ import us.ststephens.geonotes.models.Note;
 
 public class NewNoteActivity extends BaseActivity implements NewNoteFragment.OnNoteSavedListener{
     private static final String TAG_FRAG = "tag:fragment";
-    public static final String KEY_NOTE = "key:note";
+    public static final String KEY_CREATED_NOTE = "key:note";
 
     public static Intent newInstance(Context context) {
         return new Intent(context, NewNoteActivity.class);
@@ -37,7 +37,7 @@ public class NewNoteActivity extends BaseActivity implements NewNoteFragment.OnN
     @Override
     public void onNoteSaved(Note note) {
         Intent intent = new Intent();
-        intent.putExtra(KEY_NOTE, note);
+        intent.putExtra(KEY_CREATED_NOTE, note);
         setResult(RESULT_OK, intent);
         finish();
     }

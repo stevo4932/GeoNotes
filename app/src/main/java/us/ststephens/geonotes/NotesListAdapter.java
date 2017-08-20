@@ -1,5 +1,6 @@
 package us.ststephens.geonotes;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.CircularArray;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import us.ststephens.geonotes.models.Note;
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.ViewHolder> {
     private CircularArray<Note> notes;
     private OnNoteSelectedListener listener;
+    private RecyclerView recyclerView;
 
     public NotesListAdapter() {
         this.notes = new CircularArray<>();
@@ -21,18 +23,35 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
 
     public void setNotes(Note[] notes) {
         for (Note note : notes) {
-            this.notes.addLast(note);
+            if (note != null) {
+                this.notes.addLast(note);
+            }
         }
         notifyDataSetChanged();
     }
 
-    public void addNote(Note note) {
+    public void addNote(@NonNull Note note) {
         notes.addFirst(note);
         notifyItemInserted(0);
+        if (recyclerView != null) {
+            recyclerView.smoothScrollToPosition(0);
+        }
     }
 
     public void setListener(OnNoteSelectedListener listener) {
         this.listener = listener;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        this.recyclerView = null;
     }
 
     @Override
