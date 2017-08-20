@@ -1,8 +1,10 @@
 package us.ststephens.geonotes;
 
 import android.support.annotation.NonNull;
+import android.support.transition.TransitionManager;
 import android.support.v4.util.CircularArray;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,11 +71,9 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
     }
 
     private void onViewHolderClicked(ViewHolder viewHolder) {
-        if (listener != null) {
-            int position = viewHolder.getAdapterPosition();
-            Note note = notes.get(position);
-            listener.onNoteSelected(viewHolder.itemView, note);
-        }
+        int position = viewHolder.getAdapterPosition();
+        viewHolder.setExpanded(!viewHolder.isExpanded());
+        notifyItemChanged(position);
     }
 
     @Override
@@ -81,6 +81,7 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
         Note note = notes.get(position);
         holder.setTitle(note.getTitle());
         holder.setDescription(note.getDescription());
+        holder.toggleDescription();
     }
 
     @Override
@@ -91,6 +92,7 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
     protected static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView title;
         private TextView description;
+        private boolean isExpanded;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -104,6 +106,24 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
 
         public void setDescription(CharSequence description) {
             this.description.setText(description);
+        }
+
+        public boolean isExpanded() {
+            return isExpanded;
+        }
+
+        public void setExpanded(boolean expanded) {
+            isExpanded = expanded;
+        }
+
+        public void toggleDescription() {
+            if (isExpanded()) {
+                description.setMaxLines(Integer.MAX_VALUE);
+                description.setEllipsize(null);
+            } else {
+                description.setMaxLines(2);
+                description.setEllipsize(TextUtils.TruncateAt.END);
+            }
         }
     }
 
