@@ -57,6 +57,7 @@ public class NoteListFragment extends Fragment implements View.OnClickListener, 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.note_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new ExpandItemAnimator());
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(this);
         return view;
